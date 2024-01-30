@@ -1,0 +1,134 @@
+syntax = "proto3";
+
+package com.yolo.assignment.exbankingservice;
+
+import "google/protobuf/empty.proto";
+
+message User {
+  string id = 1;
+  string firstName = 2;
+  string lastName = 3;
+  string passportNo = 4;
+  ContactInfo contactInfo = 5;
+  string address = 6;
+  Audit auditInfo = 7;
+}
+
+message Account {
+  string id = 1;
+  string userId = 2;
+  string accountNumber = 3;
+  AccountType accountType = 4;
+  int32 balance = 5;
+  string currencyId = 6;
+  Audit auditInfo = 7;
+}
+
+message Transaction {
+  string id = 1;
+  string senderAccountNo = 2;
+  string receiverAccountNo = 3;
+  int32 amount = 4;
+  string remarks = 5;
+  string currencyId = 6;
+  string timestamp = 7;
+}
+
+message Currency {
+  string id = 1;
+  string name = 2;
+  string code = 3;
+  string description = 4;
+  int32 precision = 5 ;
+}
+
+message ContactInfo {
+  string email = 1;
+  Telephone telephone = 2;
+}
+
+message Telephone {
+  string countryCode = 1;
+  string number = 2;
+}
+
+message CreateUserRequest {
+  User user = 1;
+}
+
+message CreateUserResponse {
+  User user = 1;
+  Account account = 2;
+}
+
+message DepositRequest {
+  string accountNumber = 1;
+  int32 amount = 2;
+  string currencyId = 3;
+  string remarks = 4;
+}
+
+message DepositResponse {
+  Account account = 1;
+}
+
+message WithdrawRequest {
+  string accountNumber = 1;
+  int32 amount = 2;
+  string currencyId = 3;
+}
+
+message WithdrawResponse {
+  Account account = 1;
+}
+
+message GetBalanceRequest {
+  string accountNumber = 1;
+}
+
+message GetBalanceResponse {
+  Account account = 1;
+}
+
+message SendRequest {
+  string senderAccountNo = 1;
+  string receiverAccountNo = 2;
+  int32 amount = 3;
+  string currencyId = 4;
+  string remarks = 5;
+}
+
+message Audit {
+  int64  createdAt = 1;
+  string createdBy = 2;
+  int64  modifiedAt = 3;
+  string modifiedBy = 4;
+  Status status = 5;
+  int32 version = 6;
+}
+
+message SendResponse {
+  Transaction transaction = 1;
+}
+
+service UserService {
+  rpc create_user(CreateUserRequest) returns (CreateUserResponse) {};
+}
+
+service AccountService {
+  rpc deposit(DepositRequest) returns (DepositResponse) {};
+  rpc withdraw(WithdrawRequest) returns (WithdrawResponse) {};
+  rpc get_balance(GetBalanceRequest) returns (GetBalanceResponse) {};
+  rpc send(SendRequest) returns (SendResponse) {};
+}
+
+enum AccountType {
+  SAVINGS = 0;
+  CURRENT = 1;
+}
+
+enum Status {
+  ACTIVE = 0;
+  INACTIVE = 1;
+  DELETED = 2;
+}
